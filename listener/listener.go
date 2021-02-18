@@ -6,6 +6,7 @@ import (
 
 	zmq "github.com/pebbe/zmq4"
 	"github.com/vivian-tangle/vivian-node/config"
+	"github.com/vivian-tangle/vivian-node/handler"
 )
 
 // Listener is the struct for storing the information of a ZMQ listener
@@ -31,13 +32,14 @@ func (listener *Listener) Listen() {
 		msg, _ := client.RecvMessage(0)
 		for _, str := range msg {
 			// Split the fields by the space character
-			words := strings.Fields(str)
+			txContent := strings.Fields(str)
 
-			if words[0] == "tx" {
-				fmt.Println("New transaction: ", words[1])
+			if txContent[0] == "tx" {
+				fmt.Println("New transaction: ", txContent[1], " tag: ", txContent[12])
+				go handler.NewTxHandler(txContent)
 			}
-			if words[0] == "sn" {
-				fmt.Println("Confirmed transaction: ", words[2], "for milestone", words[1])
+			if txContent[0] == "sn" {
+				fmt.Println("Confirmed transaction: ", txContent[2], "for milestone", txContent[1])
 			}
 		}
 	}
