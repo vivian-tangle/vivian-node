@@ -7,6 +7,7 @@ import (
 	zmq "github.com/pebbe/zmq4"
 	"github.com/vivian-tangle/vivian-node/config"
 	"github.com/vivian-tangle/vivian-node/handler"
+	"github.com/vivian-tangle/vivian-node/tools"
 )
 
 // Listener is the struct for storing the information of a ZMQ listener
@@ -21,7 +22,8 @@ func (listener *Listener) Listen() {
 	// Make sure the connection is closed after stopping the program
 	defer client.Close()
 
-	client.Connect(listener.Config.ZmqSocket)
+	err := client.Connect(listener.Config.ZmqSocket)
+	tools.HandleErr(err)
 
 	// Subscribe to both tx and sn (confirmed tx) topics
 	client.SetSubscribe("tx")
